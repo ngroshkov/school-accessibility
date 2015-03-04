@@ -1,0 +1,3 @@
+INDEX VERSION 1.126+/home/ngroshkov/Dropbox/ВШУ/hse/workspace/.metadata/.plugins/org.eclipse.jdt.core
+1412718798.index
+2387477515.index

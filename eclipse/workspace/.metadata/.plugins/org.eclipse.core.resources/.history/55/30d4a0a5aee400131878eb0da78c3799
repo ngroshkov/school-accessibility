@@ -1,0 +1,186 @@
+package com.school.proximity;
+
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import au.com.bytecode.opencsv.CSVReader;
+
+public class MainDownload {
+	
+	private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance(Locale.FRANCE);
+	
+	private static final String DRIVING_MODE = "driving";
+	private static final String WALKING_MODE = "walking";
+
+	
+	public static final int SCHOOL_ID = 1027;
+	public static final String MODE = WALKING_MODE;
+	public static final int SCHOOL_OBJECTID = 1587;
+	public static final int PART = 2; 
+	
+	
+	private static final DefaultHttpClient httpclient = new DefaultHttpClient();
+	
+	
+	private static final String API_KEY = "AIzaSyBxNZDQLHR5w02ksMtYSn3y5fwt-yxRSjo";
+	
+	
+
+
+
+	public static void main(String[] args) throws ClientProtocolException, IOException, ParseException, InterruptedException, URISyntaxException {
+		
+		CSVReader schoolReader = new CSVReader(new FileReader("schools.csv"), ';');
+		CSVReader housesReader = new CSVReader(new FileReader("houses.csv"), ';');
+		
+		String[] schoolFirstLine = schoolReader.readNext();
+		int objectIdSchoolIndex = fieldIndex("OBJECTID", schoolFirstLine);
+		int idSchoolIndex = fieldIndex("ID", schoolFirstLine);
+		int xSchoolIndex = fieldIndex("X", schoolFirstLine);
+		int ySchoolIndex= fieldIndex("Y", schoolFirstLine);
+		
+		String[] houseFirstLine = housesReader.readNext();
+		int idHouseIndex = fieldIndex("ID", houseFirstLine);
+		int xHouseIndex = fieldIndex("POINT_X", houseFirstLine);
+		int yHouseIndex= fieldIndex("POINT_Y", houseFirstLine);
+
+		
+//		System.out.println(idIndex);
+//		System.out.println(xIndex);
+//		System.out.println(yIndex);
+//		
+		
+	    String [] nextLine;
+	    
+/*//	    List<List<Double>> schoolCoordinates = new ArrayList<List<Double>>();
+	    List<String> schoolCoordinates = new ArrayList<String>();
+	    while ((nextLine = schoolReader.readNext()) != null) {
+	    	if (Integer.valueOf(nextLine[objectIdSchoolIndex]) == SCHOOL_OBJECTID) {
+	    		double x = NUMBER_FORMAT.parse(nextLine[xSchoolIndex]).doubleValue();
+	    		double y = NUMBER_FORMAT.parse(nextLine[ySchoolIndex]).doubleValue();
+	    		
+//	    		List<Double> coordinates = Arrays.asList(x, y);
+	    		schoolCoordinates.add(x + "," + y);
+//	    		System.out.println(x + " " + y);	
+	    	}
+	    }
+	    String origins = StringUtils.join(schoolCoordinates.toArray(), "|");
+//	    System.out.println(origins);
+*/
+
+	    int idSchool = -1;
+		double xSchool = 0;
+		double ySchool = 0;
+
+	    while ((nextLine = schoolReader.readNext()) != null) {
+	    	if (Integer.valueOf(nextLine[objectIdSchoolIndex]) == SCHOOL_OBJECTID) {
+	    		idSchool = Integer.valueOf(nextLine[idSchoolIndex]);
+	    		xSchool = NUMBER_FORMAT.parse(nextLine[xSchoolIndex]).doubleValue();
+	    		ySchool = NUMBER_FORMAT.parse(nextLine[ySchoolIndex]).doubleValue();
+	    	}
+	    }
+	    
+		System.out.println(idSchool + " " + xSchool + " " + ySchool);	
+
+
+	    
+
+	    List<Integer> houseIDs = new ArrayList<Integer>();
+	    List<String> houseCoordinates = new ArrayList<String>();
+	    while ((nextLine = housesReader.readNext()) != null) {
+	    	int id = Integer.valueOf(nextLine[idHouseIndex]);
+    		double x = NUMBER_FORMAT.parse(nextLine[xHouseIndex]).doubleValue();
+    		double y = NUMBER_FORMAT.parse(nextLine[yHouseIndex]).doubleValue();
+	    		
+    		houseIDs.add(id);
+    		houseCoordinates.add(y + "," + x);
+//	    	System.out.println(id + " " + x + " " + y);	
+	    }
+
+	    
+//	    String destinations = StringUtils.join(houseCoordinates.toArray(), "|");
+//	    System.out.println(destinations);
+	    
+//------------------------------------------------------------------	
+	    
+		URIBuilder builder = new URIBuilder();
+		builder.setScheme("https").setHost("maps.googleapis.com").setPath("/maps/api/distancematrix/xml")
+			.setParameter("origins", ySchool + "," + xSchool)
+		    .setParameter("mode", MODE)
+		    .setParameter("sensor", "false");
+//			.setParameter("key", API_KEY);
+		
+
+	    
+	    
+	    int count = 0;
+	    int fileNumb = 0;
+	    List<String> houseCoordinatesPart = new ArrayList<String>();
+	    for (int i = 0; i < houseCoordinates.size(); i++) {
+	    	
+	    	houseCoordinatesPart.add(houseCoordinates.get(i));
+	    	++count;
+	    	
+	    	if (count == 50 || (count < 50 && i == houseCoordinates.size() - 1)) {
+	    		String destinations = StringUtils.join(houseCoordinatesPart.toArray(), "|");
+
+	    		// query
+	    		builder.setParameter("destinations", destinations);
+	    		
+	    		URI uri = builder.build();
+	    		HttpGet httpget = new HttpGet(uri);
+	    		System.out.println(httpget.getURI());
+	    		
+	    		
+	    		HttpResponse response = httpclient.execute(httpget);
+	    		
+	    		OutputStream output;
+	    		if (PART == 0) {
+	    			output = new FileOutputStream(String.format("response/houses_%s_%s[%s].xml", MODE, idSchool, fileNumb));
+	    		} else {
+	    			output = new FileOutputStream(String.format("response/houses_%s_%s[%s]-[%s].xml", MODE, idSchool, fileNumb, PART));
+	    		}
+	    		response.getEntity().writeTo(output);
+
+	    		
+	    		houseCoordinatesPart = new ArrayList<String>();
+	    		count = 0;
+	    		++fileNumb;
+	    		
+	    		Thread.sleep(6000);
+//	    		Thread.sleep(1000);
+	    	}
+	    	
+	    }
+	    
+	    
+
+	}
+	
+	private static int fieldIndex(String fieldName, String[] firstLine) {
+		for (int i = 0; i < firstLine.length; i++) {
+			if (fieldName.equals(firstLine[i])) {
+				return i;
+			}
+		}
+		throw new UnsupportedOperationException("Not found!");
+	}
+	
+
+}

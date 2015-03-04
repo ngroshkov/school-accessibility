@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Districts</title>
+<style>
+.google-visualization-tooltip {margin-top:60px}
+.google-visualization-tooltip-item {font:12px 'Times New Roman';}
+
+div#title {
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 50px;
+    text-align:center;
+    font:bold 20px 'Times New Roman';
+    padding-top:10px;
+    background-color:white;
+}
+
+div#legend {
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    text-align:center;
+    padding-top:20px;
+    background-color:white;
+}
+
+div#legend table {
+    border-collapse: separate;
+    border-spacing: 8px;
+    width: 320px;
+    margin: 0 auto;
+}
+
+.legend-title {
+    font:19px 'Times New Roman';
+}
+
+.legend-color {
+    width:50px;
+}
+
+.legend-year  {
+    text-align:left;
+    width: 150px;
+}
+
+.legend-name {
+    text-align:left;
+}
+
+.chart {
+    width: 100%;
+    text-align:center;
+    background-color:white;
+}
+
+div#chart {
+    width:100%;
+    height: 2100px;
+    margin: 0 auto;
+    background-color:white;
+}
+
+div#datainfo {
+    padding-top:10px;
+    width:100%;
+    font:12px 'Times New Roman';
+    text-align:center;
+    background-color:white;
+}
+
+
+</style>
+</head>
+<body>
+
+
+<div id="title">
+    Количественное распределение жилых зданий по времени постройки<br/>
+    для каждого административного района Москвы
+</div>
+<div id="legend">
+    <table>
+        <tr>
+            <td class="legend-title" colspan="3" style="text-align:center;">Период постройки</td>
+        </tr>
+        <tr>
+          <td class="legend-color" bgcolor="#FF0000"></td>
+          <td class="legend-year">до 1917 г.</td> 
+          <td class="legend-name">(историческая)</td> 
+        </tr>
+        <tr>
+          <td class="legend-color" bgcolor="#FFA500"></td>
+          <td class="legend-year">1917-1935 гг.</td> 
+          <td class="legend-name">(конструктивизм)</td> 
+        </tr>
+        <tr>
+          <td class="legend-color" bgcolor="#FFFF00"></td>
+          <td class="legend-year">1935-1957 гг.</td> 
+          <td class="legend-name">(сталинская)</td> 
+        </tr>
+        <tr>
+          <td class="legend-color" bgcolor="#008000"></td>
+          <td class="legend-year">1957-1970 гг.</td> 
+          <td class="legend-name"></td>
+        </tr>
+        <tr>
+          <td class="legend-color" bgcolor="#0000FF"></td>
+          <td class="legend-year">1970-1991 гг.</td> 
+          <td class="legend-name"></td> 
+        </tr>
+        <tr>
+          <td class="legend-color" bgcolor="#FF00FF"></td>
+          <td class="legend-year">1991-2014 гг.</td>
+          <td class="legend-name">(современная)</td> 
+        </tr>
+    </table>
+</div>
+<div class="chart">
+    <div id="chart">
+    	<img alt="" src="download (2).png">
+    </div>
+</div>
+<div id="datainfo">
+    Данные МосгорБТИ на 06.2014 г.
+</div>
+
+
+
+</body>
+</html>

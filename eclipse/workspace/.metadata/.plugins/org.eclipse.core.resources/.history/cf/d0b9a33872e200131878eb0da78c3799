@@ -1,0 +1,134 @@
+package com.school.proximity;
+
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
+
+public class MailCompile {
+	private static final String DRIVING_MODE = "driving";
+	private static final String WALKING_MODE = "walking";
+
+	private static final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	
+
+
+	private static final int SCHOOL_ID = MainDownload.SCHOOL_ID;
+	private static final String MODE = WALKING_MODE;
+	
+	
+	
+	public static void main(String[] args) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
+
+		XPathFactory xPathfactory = XPathFactory.newInstance();
+		XPath xpath = xPathfactory.newXPath();
+
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		
+		CSVWriter writer = new CSVWriter(new FileWriter(String.format("houses_%s_%s.csv", MODE, SCHOOL_ID)), ',');
+	     // feed in your array (or convert your data to an array)
+	    String[] entries = ("ID," + MODE.toUpperCase() + "_DURATION," + MODE.toUpperCase() + "_DISTANCE").split(",");
+	    writer.writeNext(entries);
+	    
+	    
+	    CSVReader housesReader = new CSVReader(new FileReader("houses.csv"), ';');
+		String[] houseFirstLine = housesReader.readNext();
+		int idHouseIndex = fieldIndex("ID", houseFirstLine);
+		
+		
+		String [] nextLine;
+
+//	    List<Integer> houseIDs = new ArrayList<Integer>();
+		// ----------------------------------
+		XPathExpression elementExpression = xpath.compile("/DistanceMatrixResponse/row/element");
+		XPathExpression durationExpression = xpath.compile("duration/value");
+		XPathExpression distanceExpression = xpath.compile("distance/value");
+
+		InputStream xmlInputStream;
+		Document document;
+		NodeList elementList = null;
+		int elementListIndex = 0;
+		int fileID = -1;
+		
+	    while ((nextLine = housesReader.readNext()) != null) {
+	    	String[] entry = new String[3];
+	    	int id = Integer.valueOf(nextLine[idHouseIndex]);
+	    	entry[0] = String.valueOf(id);
+
+	    	
+	    	
+	    	
+//			xmlInputStream = new FileInputStream(String.format("response/houses_%s[%s].xml", SCHOOL_ID, fileID));
+//			document = builder.parse(xmlInputStream);
+
+			
+//			XPathExpression rowExpression = xpath.compile("/DistanceMatrixResponse/row");
+			
+//			Node rowNode = (Node) rowExpression.evaluate(document, XPathConstants.NODE);
+//			Node elementNode = (Node) elementExpression.evaluate(document, XPathConstants.NODE);
+//			elementList = (NodeList) elementExpression.evaluate(document, XPathConstants.NODESET);
+			if (elementList == null || elementListIndex >= elementList.getLength()) {
+				++fileID;
+				elementListIndex = 0;
+				xmlInputStream = new FileInputStream(String.format("response/houses_%s_%s[%s].xml", MODE, SCHOOL_ID, fileID));
+				document = builder.parse(xmlInputStream);
+				elementList = (NodeList) elementExpression.evaluate(document, XPathConstants.NODESET);
+			}
+			
+			Node node = elementList.item(elementListIndex);
+			
+			System.out.println(fileID + " " + elementListIndex);
+			try {
+				String duration = (String) durationExpression.evaluate(node, XPathConstants.STRING);
+				String distance = (String) distanceExpression.evaluate(node, XPathConstants.STRING);
+			
+				entry[1] = duration;
+				entry[2] = distance;
+			
+				writer.writeNext(entry);
+			
+				++elementListIndex;
+			} catch (XPathExpressionException  e){
+				writer.close();
+				return;
+			}
+//    		houseIDs.add(id);
+//	    	System.out.println(id + " " + x + " " + y);	
+	    }
+
+	    
+	    
+		writer.close();
+		
+	}
+	
+	private static int fieldIndex(String fieldName, String[] firstLine) {
+		for (int i = 0; i < firstLine.length; i++) {
+			if (fieldName.equals(firstLine[i])) {
+				return i;
+			}
+		}
+		throw new UnsupportedOperationException("Not found!");
+	}
+
+
+}
