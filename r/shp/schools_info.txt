@@ -1,0 +1,10 @@
+Data Type:	File Geodatabase Feature Class 
+Location:	D:\GROSHKOV\hse\school-accessability\arcmap\layers\MOSCOW.gdb
+Feature Class:	schools_point
+Feature Type:	Simple
+Geometry Type:	Point
+
+Geographic Coordinate System:	GCS_WGS_1984
+Datum: 	D_WGS_1984
+Prime Meridian: 	Greenwich
+Angular Unit: 	Degree
