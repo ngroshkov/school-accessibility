@@ -2,6 +2,6 @@
     "installOptions" : {
         "installDependencies" : true,
         "installFromRepository" : true,
-        "libraryPath" : "/media/WORK/Dropbox/ВШУ/hse/r/packrat/lib/i686-pc-linux-gnu/3.0.2"
+        "libraryPath" : "/home/kolun4ek/R/i686-pc-linux-gnu-library/3.0"
     }
 }
