@@ -2,6 +2,6 @@
     "installOptions" : {
         "installDependencies" : true,
         "installFromRepository" : true,
-        "libraryPath" : "/home/ngroshkov/R/x86_64-pc-linux-gnu-library/3.1"
+        "libraryPath" : "/home/ngroshkov/R/x86_64-pc-linux-gnu-library/3.2"
     }
 }
