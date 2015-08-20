@@ -23,6 +23,12 @@ data_colnames = c("Округ",
                   "Процент школьников, проживающих на недоступной от школ территории по данным Google, от всех школьников жилой зоны",
                   "Число школьников, проживающих дальше 500 м от ближайшей школы",
                   "Число школьников, проживающих дальше 500 м от ближайшей школы по пешеходным маршрутам");
+data_colnames_eng = c("Administrative okrug",
+                      "Mean number of students per school",
+                      "Percent of students who lives farther than 500m from the closest school",
+                      "Percent of students who lives farther than 500m from the closest school by use of pedestrian routes",
+                      "Students who lives farther than 500m from the closest school",
+                      "Students who lives farther than 500m from the closest school by use of pedestrian routes");
 
 colors_students_per_school_mean = c("#730000", "#A80000", "#e60000", "#ff7f7f", "#a3ff73", "#55ff00", "#4ce600", "#38a800", "#267300", "#264500");
 
