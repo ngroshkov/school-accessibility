@@ -9,8 +9,8 @@ complex.size = function(complexes){
   step3v <- numeric();
   
   for (cIdx in 1:nrow(complexes)) {
-    print(paste(cIdx, " ", url, " ", round((100*cIdx)/nrow(complexes), digits = 2), "%", sep = ""));
     url <- complexes$WEBSITE[cIdx];
+    print(paste(cIdx, " ", url, " ", round((100*cIdx)/nrow(complexes), digits = 2), "%", sep = ""));
     
     step1 <- NA;
     step2 <- NA;
