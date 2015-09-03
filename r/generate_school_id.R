@@ -76,11 +76,11 @@ assigned.area.best.school.ids <- function(schools.without.assigned.area, schools
   assigned.area.best.school.ids;
 }
 
-calc.distance.between.buildings.double <- function(buildings.double, buildings) {
+calc.distance.between.buildings.double <- function(agg.double, buildings) {
   calc.distance.between.buildings.double <- numeric();
   
-  for (bIdx in 1:nrow(buildings.double)) {
-    id <- buildings.double$ID[bIdx];
+  for (bIdx in 1:nrow(agg.double)) {
+    id <- agg.double$ID[bIdx];
     
     builds <- buildings[buildings$ID == id,]
     
@@ -91,26 +91,26 @@ calc.distance.between.buildings.double <- function(buildings.double, buildings) 
     
     calc.distance.between.buildings.double <- c(calc.distance.between.buildings.double, distance)
     
-    print(paste(bIdx, " ", round((100*bIdx)/nrow(buildings.double), digits = 2), "%", sep = ""));
+    print(paste(bIdx, " ", round((100*bIdx)/nrow(agg.double), digits = 2), "%", sep = ""));
   };
   
   calc.distance.between.buildings.double;
 }
 
-calc.same.students <- function(buildings.double, buildings) {
-  calc.same.students <- logical();
+calc.same.opl <- function(agg.double, buildings) {
+  calc.same.opl <- logical();
   
-  for (bIdx in 1:nrow(buildings.double)) {
-    id <- buildings.double$ID[bIdx];
+  for (bIdx in 1:nrow(agg.double)) {
+    id <- agg.double$ID[bIdx];
     
     builds <- buildings[buildings$ID == id,]
-    s1 <- builds$STUDENTS[1];
-    s2 <- builds$STUDENTS[2];
+    s1 <- builds$OPL_G[1];
+    s2 <- builds$OPL_G[2];
 
-    calc.same.students <- c(calc.same.students, s1 == s2)
+    calc.same.opl <- c(calc.same.opl, s1 == s2)
     
-    print(paste(bIdx, " ", round((100*bIdx)/nrow(buildings.double), digits = 2), "%", sep = ""));
+    print(paste(bIdx, " ", round((100*bIdx)/nrow(agg.double), digits = 2), "%", sep = ""));
   };
   
-  calc.same.students;
+  calc.same.opl;
 }
