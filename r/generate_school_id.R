@@ -115,7 +115,34 @@ calc.same.opl <- function(agg.double, buildings) {
   calc.same.opl;
 }
 
-calc.same.opl <- function(agg.double, buildings) {
+generate.school2buildings.for.close.doubles <- function(agg.double, buildings) {
+  generate.school2buildings.for.close.doubles <- data.frame();
+  
+  for (bIdx in 1:nrow(agg.double)) {
+    id <- agg.double$ID[bIdx];
+    
+    builds <- buildings[buildings$ID == id,]
+    
+    newId1 <- builds$NEW_ID[1];
+    newId2 <- builds$NEW_ID[2];
+    
+    sch2bld <- school2building[school2building$BUILDING_ID == id,];
+    
+    if (nrow(sch2bld) > 0) {
+      sch2bld$OBJECTID <- NA;
+    
+      sch2bld1 <- sch2bld2 <- sch2bld;
+    
+      sch2bld1$NEW_BUILDING_ID <- newId1;
+      sch2bld2$NEW_BUILDING_ID <- newId2;
+    
+      generate.school2buildings.for.close.doubles <- rbind(generate.school2buildings.for.close.doubles, sch2bld1, sch2bld2);
+    }
+  }
+  generate.school2buildings.for.close.doubles;
+}
+
+generate.school2buildings.for.far.doubles <- function(agg.double, buildings) {
   for (bIdx in 1:nrow(agg.double)) {
     id <- agg.double$ID[bIdx];
     
