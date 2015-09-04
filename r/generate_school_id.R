@@ -142,44 +142,48 @@ generate.school2buildings.for.close.doubles <- function(agg.double, buildings) {
   generate.school2buildings.for.close.doubles;
 }
 
-generate.school2buildings.for.far.doubles <- function(agg.double, buildings) {
+generate.school2buildings.for.far.doubles <- function(agg.double, buildings, school2building, schools, school.blocks) {
+  generate.school2buildings.for.far.doubles <- data.frame();
+  
   for (bIdx in 1:nrow(agg.double)) {
     id <- agg.double$ID[bIdx];
     
     builds <- buildings[buildings$ID == id,]
     
+    newId1 <- builds$NEW_ID[1];
+    newId2 <- builds$NEW_ID[2];
+    
     p1 <- c(builds$POINT_X[1], builds$POINT_Y[1]);
     p2 <- c(builds$POINT_X[2], builds$POINT_Y[2]);
     
-    sch2bld <- school2building[school2building$BUILDING_ID == id];
+    schoolIds <- unique(school2building[school2building$BUILDING_ID == id,]$SCHOOL_ID);
+    schoolIds <- schools[schools$ID %in% schoolIds,]$ID;
     
-    schoolIdList <- numeric();
-    
-    for (s2bIdx in 1:nrow(sch2bld)) {
-      sId <- sch2bld$SCHOOL_ID[s2bIdx];
+    for (sId in schoolIds) {
+      sblks <- school.blocks[school.blocks$SCHOOL_ID == sId,];
       
-      if (nrow(schools[schools$ID == sId,]) > 0) {
-        schoolIdList <- c(schoolIdList, sId);  
+      closeBuildings <- numeric();
+      
+      for (sblkIdx in 1:nrow(sblks)) {
+        sblk <- sblks[sblkIdx,];
+        sblkP <- c(sblk$POINT_X[1],sblk$POINT_Y[1]);
+        
+        dist1 <- distVincentyEllipsoid(p1, sblkP);
+        dist2 <- distVincentyEllipsoid(p2, sblkP);
+        
+        newId <- if (dist1 < dist2) newId1 else newId2;
+        
+        closeBuildings <- c(closeBuildings, newId);
+        
       };
       
-    };
-    
-    for (sId in schoolIdList) {
-      sch.blks <- school.blocks[school.blocks$SCHOOL_ID == sId,];
+      closeBuildings <- unique(closeBuildings);
       
-      sch.blks.list <- numeric();
+      s2b <- data.frame(OBJECTID = NA, BUILDING_ID = id, SCHOOL_ID = sId, NEW_BUILDING_ID=closeBuildings);
       
-      for (sbIdx in 1:nrow(sch.blks)){
-        sbId <- sch.blks$ID[sbId];
-        sbp <- c(sch.blks$POINT_X[sbId], sch.blks$POINT_Y[sbId]);
-        
-        dist1 <- distVincentyEllipsoid(p1, sbp);
-        dist2 <- distVincentyEllipsoid(p2, sbp);
-        
-        sch.blks.list <- c(sch.blks.list, sbId)
-      };
+      generate.school2buildings.for.far.doubles <- rbind(generate.school2buildings.for.far.doubles, s2b);
     };
-    
+    print(paste(bIdx, " ", round((100*bIdx)/nrow(agg.double), digits = 2), "%", sep = ""));
   };
-  
+  generate.school2buildings.for.far.doubles;
 }
