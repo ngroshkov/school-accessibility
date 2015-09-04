@@ -114,3 +114,45 @@ calc.same.opl <- function(agg.double, buildings) {
   
   calc.same.opl;
 }
+
+calc.same.opl <- function(agg.double, buildings) {
+  for (bIdx in 1:nrow(agg.double)) {
+    id <- agg.double$ID[bIdx];
+    
+    builds <- buildings[buildings$ID == id,]
+    
+    p1 <- c(builds$POINT_X[1], builds$POINT_Y[1]);
+    p2 <- c(builds$POINT_X[2], builds$POINT_Y[2]);
+    
+    sch2bld <- school2building[school2building$BUILDING_ID == id];
+    
+    schoolIdList <- numeric();
+    
+    for (s2bIdx in 1:nrow(sch2bld)) {
+      sId <- sch2bld$SCHOOL_ID[s2bIdx];
+      
+      if (nrow(schools[schools$ID == sId,]) > 0) {
+        schoolIdList <- c(schoolIdList, sId);  
+      };
+      
+    };
+    
+    for (sId in schoolIdList) {
+      sch.blks <- school.blocks[school.blocks$SCHOOL_ID == sId,];
+      
+      sch.blks.list <- numeric();
+      
+      for (sbIdx in 1:nrow(sch.blks)){
+        sbId <- sch.blks$ID[sbId];
+        sbp <- c(sch.blks$POINT_X[sbId], sch.blks$POINT_Y[sbId]);
+        
+        dist1 <- distVincentyEllipsoid(p1, sbp);
+        dist2 <- distVincentyEllipsoid(p2, sbp);
+        
+        sch.blks.list <- c(sch.blks.list, sbId)
+      };
+    };
+    
+  };
+  
+}
