@@ -54,24 +54,30 @@ radiuses = function(schools, buildings){
   radiuses;
 }
 
-freqhist_school_rad_for_500_students <- ggplot(schools, aes(x=schools$r500)) +
-  geom_histogram(aes(fill=cut(schools$r500, breaks=seq(49, 999, by = 50))), colour="black", fill="white", binwidth = 25) +
+freqhist_school_rad_for_500_students <- ggplot(schools.old, aes(x=schools.old$r500)) +
+  geom_histogram(aes(fill=cut(schools.old$r500, breaks=seq(49, 999, by = 50))), colour="black", fill="white", binwidth = 25) +
   #geom_density(alpha=.2) +
   scale_x_continuous(name="Радиус доступности, школы охватывающий 500 школьников", breaks=seq(0, 1000, by = 50), limits=c(0, 1000)) +
   scale_y_continuous(name="Частота распределения", breaks=seq(0, 350, 50)) +
   theme(legend.position="none")
 
-freqhist_school_rad_for_800_students <- ggplot(schools, aes(x=schools$r800)) +
-  geom_histogram(aes(fill=cut(schools$r800, breaks=seq(49, 999, by = 50))), colour="black", fill="white", binwidth = 25) +
+freqhist_school_rad_for_800_students <- ggplot(schools.old, aes(x=schools.old$r800)) +
+  geom_histogram(aes(fill=cut(schools.old$r800, breaks=seq(49, 999, by = 50))), colour="black", fill="white", binwidth = 25) +
   #geom_density(alpha=.2) +
   scale_x_continuous(name="Радиус доступности, школы охватывающий 800 школьников", breaks=seq(0, 1000, by = 50), limits=c(0, 1000)) +
   scale_y_continuous(name="Частота распределения", breaks=seq(0, 350, 50)) +
   theme(legend.position="none")
 
-freqhist_school_rad_for_1000_students <- ggplot(schools, aes(x=schools$r1000)) +
-  geom_histogram(aes(fill=cut(schools$r1000, breaks=seq(49, 999, by = 50))), colour="black", fill="white", binwidth = 25) +
+freqhist_school_rad_for_1000_students <- ggplot(schools.old, aes(x=schools.old$r1000)) +
+  geom_histogram(aes(fill=cut(schools.old$r1000, breaks=seq(49, 999, by = 50))), colour="black", fill="white", binwidth = 25) +
   #geom_density(alpha=.2) +
   scale_x_continuous(name="Радиус доступности, школы охватывающий 1000 школьников", breaks=seq(0, 1000, by = 50), limits=c(0, 1000)) +
   scale_y_continuous(name="Частота распределения", breaks=seq(0, 350, 50)) +
   theme(legend.position="none")
 
+freqhist_asarea_students <- ggplot(schools, aes(x=schools$ASSIGNMENT_AREA_STUDENTS)) +
+  geom_histogram(aes(fill=cut(schools$ASSIGNMENT_AREA_STUDENTS, breaks=seq(999, 49999, by = 1000))), colour="black", fill="white", binwidth = 25) +
+  #geom_density(alpha=.2) +
+  scale_x_continuous(name="Школьники в закрепленной территории", breaks=seq(0, 50000, by = 1000), limits=c(0, 50000)) +
+  scale_y_continuous(name="Частота распределения", breaks=seq(0, 350, 50)) +
+  theme(legend.position="none")
