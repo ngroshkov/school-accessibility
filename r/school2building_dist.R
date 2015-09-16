@@ -75,3 +75,31 @@ calc.school2building.economic <- function(buildings, schools, school2building.di
   calc.school2building.economic <- list(schools.current.fill, school2building.economic);
   calc.school2building.economic;
 }
+
+calc.dist.for.school2building <- function(buildings, schools, school.blocks, school2building) {
+  
+  sbs <- integer();
+  dists <- integer();
+  for (s2bIdx in 1:nrow(school2building)) {
+    bId <- school2building$BUILDING_ID[s2bIdx];
+    sId <- school2building$SCHOOL_ID[s2bIdx];
+    
+    build <- buildings[buildings$ID == bId,];
+    bp <- c(build$POINT_X[1], build$POINT_Y[1]);
+    
+    sblocks <- school.blocks[school.blocks$SCHOOL_ID == sId,];
+    sblocks$DIST <- mapply({function(x,y) as.integer(round(distVincentyEllipsoid(bp, c(x,y))))}, sblocks$POINT_X, sblocks$POINT_Y);
+    closestBlock <- sblocks[which(sblocks$DIST == min(sblocks$DIST)),];
+    
+    sbs <- c(sbs, closestBlock$ID[1]);
+    dists <- c(dists, closestBlock$DIST[1]);
+
+    print(paste(s2bIdx, " ", round((100*s2bIdx)/nrow(school2building), digits = 2), "%", sep = ""));
+  }
+  
+
+  calc.dist.for.school2building <- school2building;
+  calc.dist.for.school2building$SCHOOL_BLOCK_ID <- sbs;
+  calc.dist.for.school2building$DIST <- dists;
+  calc.dist.for.school2building;
+}

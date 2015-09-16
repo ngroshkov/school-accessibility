@@ -187,3 +187,33 @@ generate.school2buildings.for.far.doubles <- function(agg.double, buildings, sch
   };
   generate.school2buildings.for.far.doubles;
 }
+
+fix.school2building.right.district = function(school2building, schoolId, rightDistrictIds) {
+  school2building.to.change <- school2building[school2building$SCHOOL_ID == schoolId,];
+  fix.school2building.right.district <- school2building[school2building$SCHOOL_ID != schoolId,];
+  
+  school2building.to.change <- school2building.to.change[school2building.to.change$BUILDING_ID %in% 
+                                                                             buildings[buildings$DISTRICT_ID %in% rightDistrictIds,]$ID,];
+  fix.school2building.right.district <- rbind(fix.school2building.right.district, school2building.to.change);
+  fix.school2building.right.district;
+}  
+
+fix.school2building.wrong.district = function(school2building, schoolId, wrongDistrictIds) {
+  school2building.to.change <- school2building[school2building$SCHOOL_ID == schoolId,];
+  fix.school2building.wrong.district <- school2building[school2building$SCHOOL_ID != schoolId,];
+  
+  school2building.to.change <- school2building.to.change[!(school2building.to.change$BUILDING_ID %in% 
+                                                                             buildings[buildings$DISTRICT_ID %in% wrongDistrictIds,])$ID,];
+  fix.school2building.wrong.district <- rbind(fix.school2building.right.district, school2building.to.change);
+  fix.school2building.wrong.district;
+}
+
+build.school2building.for.school = function(buildings, schoolId, buildingsIds) {
+  build.school2building.for.school <- data.frame(buildings[buildings$ID %in% buildingsIds,][c(2,3)])
+  build.school2building.for.school$SCHOOL_ID <- schoolId
+  build.school2building.for.school$OLD_BUILDING_ID <- build.school2building.for.school$OLD_ID
+  build.school2building.for.school$BUILDING_ID <- build.school2building.for.school$ID
+  build.school2building.for.school$OLD_ID <- NULL
+  build.school2building.for.school$ID <- NULL
+  build.school2building.for.school;
+}
