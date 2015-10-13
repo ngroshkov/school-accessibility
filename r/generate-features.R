@@ -2,6 +2,7 @@ generate.connection.features <- function(buildings, schools, school.blocks, scho
   generate.connection.features <- data.frame();
   
   featureId <- 0;
+  buildingsColumnIds <- c(which(names(buildings)=="ID"), which(names(buildings)=="POINT_X"), which(names(buildings)=="POINT_Y"));
   for (sIdx in 1:nrow(schools)) {
     sId <- schools$ID[sIdx];
     
@@ -11,7 +12,7 @@ generate.connection.features <- function(buildings, schools, school.blocks, scho
       next;
     }
     
-    s2b <- merge(s2b, buildings[buildings$ID %in% s2b$BUILDING_ID,][c(2, 10, 11)], by.x = "BUILDING_ID", by.y = "ID");
+    s2b <- merge(s2b, buildings[buildings$ID %in% s2b$BUILDING_ID,][buildingsColumnIds], by.x = "BUILDING_ID", by.y = "ID");
     s2b$BUILDING_POINT_X <- s2b$POINT_X;
     s2b$BUILDING_POINT_Y <- s2b$POINT_Y;
     
@@ -83,6 +84,7 @@ generate.area.features <- function(buildings, schools, school.blocks, school2bui
   generate.area.features <- data.frame();
   
   featureId <- 0;
+  buildingsColumnIds <- c(which(names(buildings)=="ID"), which(names(buildings)=="POINT_X"), which(names(buildings)=="POINT_Y"));
   for (sIdx in 1:nrow(schools)) {
     sId <- schools$ID[sIdx];
 
@@ -92,7 +94,7 @@ generate.area.features <- function(buildings, schools, school.blocks, school2bui
       next;
     }
     
-    s2b <- merge(s2b, buildings[buildings$ID %in% s2b$BUILDING_ID,][c(2, 10, 11)], by.x = "BUILDING_ID", by.y = "ID");
+    s2b <- merge(s2b, buildings[buildings$ID %in% s2b$BUILDING_ID,][buildingsColumnIds], by.x = "BUILDING_ID", by.y = "ID");
     s2b$BUILDING_POINT_X <- s2b$POINT_X;
     s2b$BUILDING_POINT_Y <- s2b$POINT_Y;
     
