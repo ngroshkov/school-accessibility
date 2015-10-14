@@ -162,17 +162,11 @@ generate.area.features <- function(buildings, schools, school.blocks, school2bui
         s2b.first <- s2b[s2b$SCHOOL_BLOCK_ID == s2b$SCHOOL_BLOCK_ID[s2bIdx],];
         pX2 <- s2b.first$BUILDING_POINT_X[1];
         pY2 <- s2b.first$BUILDING_POINT_Y[1];
-        bearing2 <- s2b.first$BEARING[1];
-        if(is.na(bearing2)) {
-          print("");
-        }
+        bearing2 <- s2b.first$BEARING[1] + 360;
       } else {
         pX2 <- s2b$BUILDING_POINT_X[s2bIdx+1];
         pY2 <- s2b$BUILDING_POINT_Y[s2bIdx+1];
         bearing2 <- s2b$BEARING[s2bIdx+1];
-        if(is.na(bearing2)) {
-          print("");
-        }
       }
       pXs <- s2b$SCHOOL_BLOCK_POINT_X[s2bIdx];
       pYs <- s2b$SCHOOL_BLOCK_POINT_Y[s2bIdx];
