@@ -36,6 +36,11 @@ generate.connection.features <- function(buildings, schools, school.blocks, scho
       sbs$DIST <- dists;
       
       closestSchoolBlock <- sbs[which(sbs$DIST == min(sbs$DIST)),];
+      if (closestSchoolBlock$ID[1] == 243) {
+        closestSchoolBlock <- sbs[which(sbs$ID == 244),];
+      } else if (closestSchoolBlock$ID[1] == 1444 & buildings[buildings$ID == s2b$BUILDING_ID[s2bIdx],]$DISTRICT_ID[1] == 31) {
+        closestSchoolBlock <- sbs[which(sbs$ID == 1445),];
+      }
       school.blocks.ids <- c(school.blocks.ids, closestSchoolBlock$ID[1]);
       school.blocks.p_x <- c(school.blocks.p_x, closestSchoolBlock$POINT_X[1]);
       school.blocks.p_y <- c(school.blocks.p_y, closestSchoolBlock$POINT_Y[1]);
@@ -118,6 +123,11 @@ generate.area.features <- function(buildings, schools, school.blocks, school2bui
       sbs$DIST <- dists;
       
       closestSchoolBlock <- sbs[which(sbs$DIST == min(sbs$DIST)),];
+      if (closestSchoolBlock$ID[1] == 243) {
+        closestSchoolBlock <- sbs[which(sbs$ID == 244),];
+      } else if (closestSchoolBlock$ID[1] == 1444 & buildings[buildings$ID == s2b$BUILDING_ID[s2bIdx],]$DISTRICT_ID[1] == 31) {
+        closestSchoolBlock <- sbs[which(sbs$ID == 1445),];
+      }
       school.blocks.ids <- c(school.blocks.ids, closestSchoolBlock$ID[1]);
       school.blocks.p_x <- c(school.blocks.p_x, closestSchoolBlock$POINT_X[1]);
       school.blocks.p_y <- c(school.blocks.p_y, closestSchoolBlock$POINT_Y[1]);
@@ -129,6 +139,8 @@ generate.area.features <- function(buildings, schools, school.blocks, school2bui
     s2b$SCHOOL_BLOCK_POINT_Y <- school.blocks.p_y;
     s2b$BEARING <- bearings;
     
+    s2b$BEARING <- sapply(s2b$BEARING, {function(x) ifelse(is.na(x), 0, x)});
+    
     s2b <- s2b[order(s2b$SCHOOL_BLOCK_ID, s2b$BEARING),]
     
     schs <- integer();
@@ -137,32 +149,55 @@ generate.area.features <- function(buildings, schools, school.blocks, school2bui
     pointXs <- numeric();
     pointYs <- numeric();
     for(s2bIdx in 1:nrow(s2b)) {
+      sch <- s2b$SCHOOL_ID[s2bIdx];
+      s.blk <- s2b$SCHOOL_BLOCK_ID[s2bIdx];
       featureId <- featureId + 1;
-      
-      schs <- c(schs, s2b$SCHOOL_ID[s2bIdx]);
-      s.blks <- c(s.blks, s2b$SCHOOL_BLOCK_ID[s2bIdx]);
-      featureIds <- c(featureIds, featureId);
-      pointXs <- c(pointXs, s2b$BUILDING_POINT_X[s2bIdx]);
-      pointYs <- c(pointYs, s2b$BUILDING_POINT_Y[s2bIdx]);
-      
-      schs <- c(schs, s2b$SCHOOL_ID[s2bIdx]);
-      s.blks <- c(s.blks, s2b$SCHOOL_BLOCK_ID[s2bIdx]);
-      featureIds <- c(featureIds, featureId);
+      pX1 <- s2b$BUILDING_POINT_X[s2bIdx];
+      pY1 <- s2b$BUILDING_POINT_Y[s2bIdx];
+      pX2 <- 0;
+      pY2 <- 0;
+      bearing1 <- s2b$BEARING[s2bIdx];
+      bearing2 <- 0;
       if (s2bIdx + 1 > nrow(s2b) | s2b$SCHOOL_BLOCK_ID[s2bIdx] != s2b$SCHOOL_BLOCK_ID[s2bIdx+1]) {
         s2b.first <- s2b[s2b$SCHOOL_BLOCK_ID == s2b$SCHOOL_BLOCK_ID[s2bIdx],];
-        
-        pointXs <- c(pointXs, s2b.first$BUILDING_POINT_X[1]);
-        pointYs <- c(pointYs, s2b.first$BUILDING_POINT_Y[1]);
+        pX2 <- s2b.first$BUILDING_POINT_X[1];
+        pY2 <- s2b.first$BUILDING_POINT_Y[1];
+        bearing2 <- s2b.first$BEARING[1];
+        if(is.na(bearing2)) {
+          print("");
+        }
       } else {
-        pointXs <- c(pointXs, s2b$BUILDING_POINT_X[s2bIdx+1]);
-        pointYs <- c(pointYs, s2b$BUILDING_POINT_Y[s2bIdx+1]);
+        pX2 <- s2b$BUILDING_POINT_X[s2bIdx+1];
+        pY2 <- s2b$BUILDING_POINT_Y[s2bIdx+1];
+        bearing2 <- s2b$BEARING[s2bIdx+1];
+        if(is.na(bearing2)) {
+          print("");
+        }
+      }
+      pXs <- s2b$SCHOOL_BLOCK_POINT_X[s2bIdx];
+      pYs <- s2b$SCHOOL_BLOCK_POINT_Y[s2bIdx];
+
+      if ((bearing2 - bearing1) > 180 ) {
+        next;
       }
       
-      schs <- c(schs, s2b$SCHOOL_ID[s2bIdx]);
-      s.blks <- c(s.blks, s2b$SCHOOL_BLOCK_ID[s2bIdx]);
+      schs <- c(schs, sch);
+      s.blks <- c(s.blks, s.blk);
       featureIds <- c(featureIds, featureId);
-      pointXs <- c(pointXs, s2b$SCHOOL_BLOCK_POINT_X[s2bIdx]);
-      pointYs <- c(pointYs, s2b$SCHOOL_BLOCK_POINT_Y[s2bIdx]);
+      pointXs <- c(pointXs, pX1);
+      pointYs <- c(pointYs, pY1);
+      
+      schs <- c(schs, sch);
+      s.blks <- c(s.blks, s.blk);
+      featureIds <- c(featureIds, featureId);
+      pointXs <- c(pointXs, pX2);
+      pointYs <- c(pointYs, pY2);
+     
+      schs <- c(schs, sch);
+      s.blks <- c(s.blks, s.blk);
+      featureIds <- c(featureIds, featureId);
+      pointXs <- c(pointXs, pXs);
+      pointYs <- c(pointYs, pYs);
     }
     
     area.features <- 
