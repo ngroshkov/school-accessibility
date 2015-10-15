@@ -1,5 +1,6 @@
 school.choice.radius <- function(buildings, school.blocks) {
   
+  ids <- integer();
   s500count <- integer();
   s800count <- integer();
   s1000count <- integer();
@@ -30,13 +31,14 @@ school.choice.radius <- function(buildings, school.blocks) {
       }
     };
     
+    ids <- c(ids, id);
     s500count <- c(s500count, length(unique(s500)));
     s800count <- c(s800count, length(unique(s800)));
     s1000count <- c(s1000count, length(unique(s1000))); 
     
     print(paste(bIdx, " ", round((100*bIdx)/nrow(buildings), digits = 2), "%", sep = ""));
   };
-  school.choice.radius <- data.frame(S500 = s500count, S800 = s800count, S1000 = s1000count);
+  school.choice.radius <- data.frame(ID = ids, S500 = s500count, S800 = s800count, S1000 = s1000count);
 }
 
 school.choice.complex <- function(buildings, school2building, complexes) {
