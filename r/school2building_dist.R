@@ -1,7 +1,9 @@
-calc.school2building.dist <- function(buildings, schools, school.blocks) {
+calc.school2building.economic <- function(buildings, schools, school.blocks) {
   
   calc.school2building.dist <- data.frame();
-
+  
+  i <- 0;
+  
   for (sIdx in 1:nrow(schools)) {
     sId <- schools$ID[sIdx];
     sblocks <- school.blocks[school.blocks$SCHOOL_ID == sId,];
@@ -20,11 +22,14 @@ calc.school2building.dist <- function(buildings, schools, school.blocks) {
       dist <- as.integer(round(min(sbdists)));
       dists <- c(dists, dist);
     }
-    df <- data.frame(BUILDING_ID = buildings$ID)
-    df$SCHOOL_ID <- sId;
-    df$DIST <- dists;
     
-    calc.school2building.dist <- rbind(calc.school2building.dist, df);
+    calc.school2building.dist <- rbind(calc.school2building.dist, data.frame(SCHOOL_ID = sId, BUILDING_ID = buildings$ID, DIST = dists));
+    
+    if (nrow(calc.school2building.dist) > 10000000) {
+      i <- i + 1;
+      write.csv(calc.school2building.dist, paste("./school2building.dist",i,".csv",sep = ""), row.names = FALSE, na = "");
+      calc.school2building.dist <- calc.school2building.dist[0,];
+    }
     print(paste(sIdx, " ", round((100*sIdx)/nrow(schools), digits = 2), "%", sep = ""));
   };
   calc.school2building.dist;  
@@ -45,10 +50,10 @@ calc.school2building.economic <- function(buildings, schools, school2building.di
  
   
   for (s2bIdx in 1:nrow(school2building.dist)) {
-    if (s2bIdx %% 100000 == 0) {
-      write.csv(data.frame(SCHOOL_ID = result.school.ids, BUILDING_ID = result.building.ids), "../csv/school2building-ecomomic.csv", row.names = FALSE);
-      write.csv(schools.current.fill, "../csv/schools-current-fill.csv", row.names = FALSE);
-    }
+#    if (s2bIdx %% 100000 == 0) {
+#      write.csv(data.frame(SCHOOL_ID = result.school.ids, BUILDING_ID = result.building.ids), "../csv/school2building-ecomomic.csv", row.names = FALSE);
+#      write.csv(schools.current.fill, "../csv/schools-current-fill.csv", row.names = FALSE);
+#    }
     
     sId <- school2building.dist$SCHOOL_ID[s2bIdx];
     bId <- school2building.dist$BUILDING_ID[s2bIdx];
@@ -57,7 +62,8 @@ calc.school2building.economic <- function(buildings, schools, school2building.di
       next;
     }
 
-    currentFill <- schools.current.fill[schools.current.fill$ID==sId,]$CURRENT_FILL;
+    
+    currentFill <- schools.current.fill[schools.current.fill$ID==sId,]$CURRENT_FILL[1];
     if (currentFill >= minSchoolStudents) {
       next;
     }
