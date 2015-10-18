@@ -32,17 +32,17 @@ data_colnames_eng = c("Administrative okrug",
 
 colors_students_per_school_mean = c("#730000", "#A80000", "#e60000", "#ff7f7f", "#a3ff73", "#55ff00", "#4ce600", "#38a800", "#267300", "#264500");
 
-freqhist_students_per_school_mean_hist <- ggplot(data, aes(x=data$students_per_school_mean)) +
-  geom_histogram(aes(fill=cut(data$students_per_school_mean, breaks=seq(99, 999, by = 100))), binwidth = 25) +
+freqhist_students_per_school_mean_hist <- ggplot(data, aes(x=districts$MEAN_STUDENTS_PER_SCHOOL)) +
+  geom_histogram(aes(fill=cut(districts$MEAN_STUDENTS_PER_SCHOOL, breaks=seq(99, 999, by = 100))), binwidth = 25) +
   #geom_density(alpha=.2) +
   scale_x_continuous(name="Среднее число обучающихся на одну школу", breaks=seq(0, 1000, by = 100), limits=c(0, 1000)) +
   scale_y_continuous(name="Частота распределения", breaks=0:20) +
-  scale_fill_manual("", breaks=levels(cut(data$students_per_school_mean, breaks=seq(99, 999, by = 100), right = FALSE)), values=colors_students_per_school_mean) +
+  scale_fill_manual("", breaks=levels(cut(districts$MEAN_STUDENTS_PER_SCHOOL, breaks=seq(99, 999, by = 100), right = FALSE)), values=colors_students_per_school_mean) +
   theme(legend.position="none")
 
 
 
-freqhist_not_accessible_students_by_radius <- ggplot(data, aes(x=data$not_accessible_area_by_radius)) +
+freqhist_not_accessible_students_by_radius <- ggplot(data, aes(x=districts$NOT_ACCESSIBLE_AREA_BY_RADIUS)) +
   geom_histogram(aes(y=..count..), colour="black", fill="white", binwidth = 50) +
   #geom_density(alpha=.2) +
   scale_x_continuous(name="Число школьников, проживающих дальше 500 м \n от ближайшей школы", breaks=seq(0, 3400, by = 200)) +
@@ -65,18 +65,32 @@ lm_eqn = function(df, x, y){
   as.character(as.expression(eq));                 
 }
 
-scat_not_accessible_students_by_radius_ON_students_per_school_mean <- ggplot(data, aes(x=data$not_accessible_area_by_radius, y=data$students_per_school_mean)) +
-  geom_point(aes(color=cut(data$students_per_school_mean, breaks=seq(99, 999, by = 100)), size=4)) +
-  #geom_text(aes(label=rownames(data)), colour="black", size=3, hjust=-0.1, vjust=0) +
+scat_not_accessible_students_by_radius_ON_students_per_school_mean <- ggplot(districts, aes(x=districts$NOT_ACCESSIBLE_AREA_BY_RADIUS, y=districts$MEAN_STUDENTS_PER_SCHOOL)) +
+  geom_point(aes(color=cut(districts$MEAN_STUDENTS_PER_SCHOOL, breaks=seq(99, 999, by = 100)), size=4)) +
+  #geom_text(aes(label=rownames(districts)), colour="black", size=3, hjust=-0.1, vjust=0) +
   scale_colour_manual("", values=colors_students_per_school_mean) +
   #scale_colour_manual(values = c("red","green")) +
-  scale_x_continuous(limits = c(min(data$not_accessible_area_by_radius), max(data$not_accessible_area_by_radius) + 0.0001)) +
-  scale_y_continuous(limits = c(0, max(data$students_per_school_mean))) +
+  scale_x_continuous(limits = c(min(districts$NOT_ACCESSIBLE_AREA_BY_RADIUS), max(districts$NOT_ACCESSIBLE_AREA_BY_RADIUS) + 0.0001)) +
+  scale_y_continuous(limits = c(0, max(districts$MEAN_STUDENTS_PER_SCHOOL))) +
   theme(legend.position="none") +
   geom_smooth(method=lm) +
-  geom_text(aes(x = 2000, y = 1050, label = lm_eqn(data, data$not_accessible_area_by_radius, data$students_per_school_mean)), parse = TRUE, family="serif", fontface="italic", size=16) +
-  #geom_text(aes(x = data$not_accessible_area_by_radius, y = data$students_per_school_mean, label = not_accessible_students_by_radius_percent_eqn(data)), parse = TRUE) +
+  #geom_text(aes(x = 2000, y = 1050, label = lm_eqn(districts, districts$NOT_ACCESSIBLE_AREA_BY_RADIUS, districts$MEAN_STUDENTS_PER_SCHOOL)), parse = TRUE, family="serif", fontface="italic", size=16) +
+  #geom_text(aes(x = districts$NOT_ACCESSIBLE_AREA_BY_RADIUS, y = districts$MEAN_STUDENTS_PER_SCHOOL, label = not_accessible_students_by_radius_percent_eqn(data)), parse = TRUE) +
   xlab("Число школьников, проживающих дальше 500 м \n от ближайшей школы") +
+  ylab("Среднее число обучающихся на одну школу");
+
+scat_accessible_students_by_radius_ON_students_per_school_mean <- ggplot(districts, aes(x=districts$ACCESSIBLE_AREA_BY_RADIUS, y=districts$MEAN_STUDENTS_PER_SCHOOL)) +
+  geom_point(aes(color=cut(districts$MEAN_STUDENTS_PER_SCHOOL, breaks=seq(99, 999, by = 100)), size=4)) +
+  #geom_text(aes(label=rownames(districts)), colour="black", size=3, hjust=-0.1, vjust=0) +
+  scale_colour_manual("", values=colors_students_per_school_mean) +
+  #scale_colour_manual(values = c("red","green")) +
+  scale_x_continuous(limits = c(min(districts$ACCESSIBLE_AREA_BY_RADIUS), max(districts$ACCESSIBLE_AREA_BY_RADIUS) + 0.0001)) +
+  scale_y_continuous(limits = c(0, max(districts$MEAN_STUDENTS_PER_SCHOOL))) +
+  theme(legend.position="none") +
+  geom_smooth(method=lm) +
+  #geom_text(aes(x = 2000, y = 1050, label = lm_eqn(districts, districts$ACCESSIBLE_AREA_BY_RADIUS, districts$MEAN_STUDENTS_PER_SCHOOL)), parse = TRUE, family="serif", fontface="italic", size=16) +
+  #geom_text(aes(x = districts$ACCESSIBLE_AREA_BY_RADIUS, y = districts$MEAN_STUDENTS_PER_SCHOOL, label = not_accessible_students_by_radius_percent_eqn(data)), parse = TRUE) +
+  xlab("Число школьников, проживающих в пределах 500 м \n от школы") +
   ylab("Среднее число обучающихся на одну школу");
 
 scat_not_accessible_students_by_google_ON_students_per_school_mean <- ggplot(data, aes(x=data$not_accessible_area_by_google, y=data$students_per_school_mean)) +
