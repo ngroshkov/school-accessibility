@@ -65,12 +65,12 @@ lm_eqn = function(df, x, y){
   as.character(as.expression(eq));                 
 }
 
-scat_not_accessible_students_by_radius_ON_students_per_school_mean <- ggplot(districts, aes(x=districts$NOT_ACCESSIBLE_AREA_BY_RADIUS, y=districts$MEAN_STUDENTS_PER_SCHOOL)) +
+scat_not_accessible_students_by_radius_ON_students_per_school_mean <- ggplot(districts, aes(x=districts$NON_ACCESSIBLE_AREA_BY_RADIUS, y=districts$MEAN_STUDENTS_PER_SCHOOL)) +
   geom_point(aes(color=cut(districts$MEAN_STUDENTS_PER_SCHOOL, breaks=seq(99, 999, by = 100)), size=4)) +
   #geom_text(aes(label=rownames(districts)), colour="black", size=3, hjust=-0.1, vjust=0) +
   scale_colour_manual("", values=colors_students_per_school_mean) +
   #scale_colour_manual(values = c("red","green")) +
-  scale_x_continuous(limits = c(min(districts$NOT_ACCESSIBLE_AREA_BY_RADIUS), max(districts$NOT_ACCESSIBLE_AREA_BY_RADIUS) + 0.0001)) +
+  scale_x_continuous(limits = c(min(districts$NON_ACCESSIBLE_AREA_BY_RADIUS), max(districts$NON_ACCESSIBLE_AREA_BY_RADIUS) + 0.0001)) +
   scale_y_continuous(limits = c(0, max(districts$MEAN_STUDENTS_PER_SCHOOL))) +
   theme(legend.position="none") +
   geom_smooth(method=lm) +
