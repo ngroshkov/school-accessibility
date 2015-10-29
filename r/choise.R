@@ -10,7 +10,7 @@ freqhist.choise  <- function(buildings, field) {
   freqhist.choise <- ggplot(buildings, aes_string(x=field, weight = "STUDENTS")) +
     geom_histogram(fill=colors$COLOR, binwidth = 1) +
     scale_x_discrete(name="Количество школ", expand = c(0,2), limits=c(0:19)) +
-    scale_y_continuous(name="Количество школьников\n(тыс. чел.)", breaks=seq(0, 325, by = 25), limits=c(0, 325)) +
+    scale_y_continuous(name="Количество школьников\n(тыс. чел.)", breaks=seq(0, 325, by = 25), limits=c(0, 340)) +
     stat_bin(binwidth=1, geom="text", aes(label=round(..count..)), size=3.5, colour="#4C4646", fontface="bold", vjust=-0.5) +
     theme(legend.position="none") +
     ggtitle(comment(buildings[[field]]));
