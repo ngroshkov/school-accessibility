@@ -11,7 +11,11 @@ freqhist.choise  <- function(buildings, field) {
     geom_histogram(fill=colors$COLOR, binwidth = 1) +
     scale_x_discrete(name="Количество школ", expand = c(0,2), limits=c(0:19)) +
 <<<<<<< HEAD
+<<<<<<< HEAD
     scale_y_continuous(name="Количество школьников\n(тыс. чел.)", breaks=seq(0, 325, by = 25), limits=c(0, 325)) +
+=======
+    scale_y_continuous(name="Количество школьников\n(тыс. чел.)", breaks=seq(0, 325, by = 25), limits=c(0, 340)) +
+>>>>>>> f717f8aa8e9447e084c08f080993494f5cc15060
 =======
     scale_y_continuous(name="Количество школьников\n(тыс. чел.)", breaks=seq(0, 325, by = 25), limits=c(0, 340)) +
 >>>>>>> f717f8aa8e9447e084c08f080993494f5cc15060
