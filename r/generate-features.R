@@ -203,3 +203,30 @@ generate.area.features <- function(buildings, schools, school.blocks, school2bui
   }
   generate.area.features;
 }
+
+generate.complex.links.features <- function(complex.centroids, schools, school.blocks) {
+  featureId <- 0;
+  
+  generate.complex.links.features <- data.frame();
+  for (cIdx in 1:nrow(complex.centroids)) {
+    cId <- complex.centroids$ID[cIdx];
+    sbs <- school.blocks[school.blocks$SCHOOL_ID %in% schools[schools$COMPLEX_ID == cId,]$ID,];
+    
+    cPointX <- complex.centroids$POINT_X[cIdx];
+    cPointY <- complex.centroids$POINT_Y[cIdx];
+    
+    for (sbIdx in 1:nrow(sbs)) {
+      sbId <- sbs$ID[sbIdx];
+      
+      featureId <- featureId + 1;
+      pointX <- sbs$POINT_X[sbIdx];
+      pointY <- sbs$POINT_Y[sbIdx];
+      
+      df <- data.frame(ID = c(cId, cId), FEATURE_ID = c(featureId, featureId), POINT_X = c(cPointX, pointX), POINT_Y = c(cPointY, pointY));
+      generate.complex.links.features <- rbind(generate.complex.links.features, df);
+    }
+    print(paste(cIdx, " ", round((100*cIdx)/nrow(complex.centroids), digits = 2), "%", sep = ""));
+  }
+  
+  generate.complex.links.features;
+}
