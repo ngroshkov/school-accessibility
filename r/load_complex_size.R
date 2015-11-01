@@ -1,14 +1,13 @@
 complex.size = function(complexes){
+  complex.size = data.frame();
   
-  xPathStep1 <- "//h3[text()='Сведения о реализации образовательных программ']/following-sibling::table[1]/tbody/tr/td[text()='Начальное общее']/following-sibling::td[2]/text()";
-  xPathStep2 <- "//h3[text()='Сведения о реализации образовательных программ']/following-sibling::table[1]/tbody/tr/td[text()='Основное общее']/following-sibling::td[2]/text()";
-  xPathStep3 <- "//h3[text()='Сведения о реализации образовательных программ']/following-sibling::table[1]/tbody/tr/td[text()='Среднее общее']/following-sibling::td[2]/text()";
+  xPathStep1 <- "//div[text()='Сведения о реализации образовательных программ']/following-sibling::table[1]/tbody/tr/td[text()='Начальное общее']/following-sibling::td[2]/text()";
+  xPathStep2 <- "//div[text()='Сведения о реализации образовательных программ']/following-sibling::table[1]/tbody/tr/td[text()='Основное общее']/following-sibling::td[2]/text()";
+  xPathStep3 <- "//div[text()='Сведения о реализации образовательных программ']/following-sibling::table[1]/tbody/tr/td[text()='Среднее общее']/following-sibling::td[2]/text()";
     
-  step1v <- numeric();
-  step2v <- numeric();
-  step3v <- numeric();
-  
   for (cIdx in 1:nrow(complexes)) {
+    cId <- complexes$ID[cIdx];
+    
     url <- complexes$WEBSITE[cIdx];
     print(paste(cIdx, " ", url, " ", round((100*cIdx)/nrow(complexes), digits = 2), "%", sep = ""));
     
@@ -17,7 +16,7 @@ complex.size = function(complexes){
     step3 <- NA;
     
     if (!is.null(url)) {
-      page <- htmlParse(paste(url, "info_edu/education/"));
+      page <- htmlParse(paste(sep = "", url, "info_edu/education/"));
       
       nodes1 <- xpathApply(doc = page, path = xPathStep1);
       nodes2 <- xpathApply(doc = page, path = xPathStep2);
@@ -33,14 +32,11 @@ complex.size = function(complexes){
       };
     };
     
-
-    step1v <- c(step1v, step1);
-    step2v <- c(step2v, step2);
-    step3v <- c(step3v, step3);
+    df <- data.frame(ID=cId, STEP1 = step1, STEP2 = step2, STEP3 = step3);
+    complex.size <- rbind(complex.size, df);
     
-    
+    write.csv(complex.size, "~/Desktop/complex.size.csv", row.names = FALSE, na = "")
   }
   
-  complex.size = data.frame(step1v, step2v, step3v);
   complex.size;
 }
